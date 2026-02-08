@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đặt hàng online</title>
+<style>
+body {
+    font-family: Arial;
+    max-width: 700px;
+    margin: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+}
+input {
+    width: 90%;
+}
+button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+}
+#ketqua {
+    margin-top: 15px;
+    background: #f2f2f2;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>ĐẶT HÀNG TRỰC TUYẾN</h2>
+
+<p>
+Tên khách hàng:<br>
+<input type="text" id="ten">
+</p>
+
+<p>
+Số điện thoại:<br>
+<input type="text" id="sdt">
+</p>
+
+<table id="bang">
+<tr>
+    <th>Mặt hàng</th>
+    <th>Giá</th>
+    <th>Số lượng</th>
+</tr>
+</table>
+
+<button onclick="guiDon()">GỬI ĐƠN HÀNG</button>
+
+<div id="ketqua"></div>
+
+<script>
+let sanPham = [];
+
+// ĐỌC FILE MẶT HÀNG
+fetch("products.json")
+.then(res => res.json())
+.then(data => {
+    sanPham = data;
+    let bang = document.getElementById("bang");
+
+    data.forEach((sp, i) => {
+        let row = bang.insertRow();
+        row.innerHTML = `
+            <td>${sp.ten}</td>
+            <td>${sp.gia.toLocaleString()} đ</td>
+            <td><input type="number" min="0" value="0" id="sl${i}"></td>
+        `;
+    });
+});
+
+function guiDon() {
+    let ten = document.getElementById("ten").value;
+    let sdt = document.getElementById("sdt").value;
+
+    if (ten === "" || sdt === "") {
+        alert("Vui lòng nhập tên và số điện thoại");
+        return;
+    }
+
+    let tong = 0;
+    let chiTiet = "";
+
+    sanPham.forEach((sp, i) => {
+        let sl = document.getElementById("sl" + i).value;
+        if (sl > 0) {
+            let tien = sl * sp.gia;
+            tong += tien;
+            chiTiet += `${sp.ten}: ${sl} <br>`;
+        }
+    });
+
+    if (chiTiet === "") {
+        alert("Chưa chọn mặt hàng");
+        return;
+    }
+
+    document.getElementById("ketqua").innerHTML =
+        "<b>Khách:</b> " + ten + "<br>" +
+        "<b>SĐT:</b> " + sdt + "<br><hr>" +
+        chiTiet +
+        "<hr><b>Tổng tiền:</b> " + tong.toLocaleString() + " đ";
+}
+</script>
+
+</body>
+</html>
