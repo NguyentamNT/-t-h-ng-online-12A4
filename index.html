@@ -141,14 +141,14 @@ function guiDonHang() {
 
   const now = new Date().toLocaleString("vi-VN");
 
-  const data = new FormData();
-  data.append("entry.1967249955", ten);      // Tên
-  data.append("entry.1071319538", sdt);      // SĐT
-  data.append("entry.929742002", now);      // Thời gian
-  data.append(
-    "entry.929742002",
-    donhang + "\nTỔNG TIỀN: " + tong + " đ"
-  );                                         // Đơn hàng
+ const data = new FormData();
+data.append("entry.1967249955", ten);          // Tên
+data.append("entry.1071319538", sdt);          // SĐT
+data.append("entry.3333333333", now);          // Thời gian
+data.append(
+  "entry.929742002",
+  donhang + "\nTỔNG TIỀN: " + tong + " đ"
+);                                             // Đơn hàng
 
   fetch(
     "https://docs.google.com/forms/u/0/d/e/1FAIpQLSd09GzRdUOSjEhAp6138o_bxbXzccj5iAAIqbjMXt2FSyD6NQ/formResponse",
