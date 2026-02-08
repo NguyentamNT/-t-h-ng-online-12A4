@@ -1,116 +1,106 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Đặt hàng online</title>
-<style>
-body {
-    font-family: Arial;
-    max-width: 700px;
-    margin: auto;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: center;
-}
-input {
-    width: 90%;
-}
-button {
-    margin-top: 10px;
-    padding: 10px;
-    width: 100%;
-}
-#ketqua {
-    margin-top: 15px;
-    background: #f2f2f2;
-    padding: 10px;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Đặt hàng online</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: auto; }
+    h1 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    input[type="number"] { width: 60px; }
+    .btn { margin-top: 15px; padding: 10px 20px; font-size: 16px; }
+  </style>
 </head>
-
 <body>
 
-<h2>ĐẶT HÀNG TRỰC TUYẾN 12A4</h2>
+<h1>ĐƠN ĐẶT HÀNG</h1>
 
+<h3>Thông tin khách hàng</h3>
 <p>
-Tên khách hàng:<br>
-<input type="text" id="ten">
+  Tên khách hàng: <br>
+  <input id="ten" type="text" style="width:100%">
 </p>
 
 <p>
-Số điện thoại:<br>
-<input type="text" id="sdt">
+  Số điện thoại: <br>
+  <input id="sdt" type="text" style="width:100%">
 </p>
 
-<table id="bang">
-<tr>
-    <th>Mặt hàng</th>
-    <th>Giá</th>
-    <th>Số lượng</th>
-</tr>
+<h3>Mặt hàng</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tên hàng</th>
+      <th>Giá</th>
+      <th>Số lượng</th>
+    </tr>
+  </thead>
+  <tbody id="danhsach"></tbody>
 </table>
 
-<button onclick="guiDon()">GỬI ĐƠN HÀNG</button>
-
-<div id="ketqua"></div>
+<button class="btn" onclick="guiDonHang()">📦 GỬI ĐƠN HÀNG</button>
 
 <script>
-let sanPham = [];
+let products = [];
 
-// ĐỌC FILE MẶT HÀNG
 fetch("products.json")
-.then(res => res.json())
-.then(data => {
-    sanPham = data;
-    let bang = document.getElementById("bang");
+  .then(res => res.json())
+  .then(data => {
+    products = data;
+    const tbody = document.getElementById("danhsach");
 
     data.forEach((sp, i) => {
-        let row = bang.insertRow();
-        row.innerHTML = `
-            <td>${sp.ten}</td>
-            <td>${sp.gia.toLocaleString()} đ</td>
-            <td><input type="number" min="0" value="0" id="sl${i}"></td>
-        `;
+      tbody.innerHTML += `
+        <tr>
+          <td>${sp.ten}</td>
+          <td>${sp.gia.toLocaleString()} đ</td>
+          <td>
+            <input type="number" min="0" value="0" id="sl${i}">
+          </td>
+        </tr>
+      `;
     });
-});
+  });
 
-function guiDon() {
-    let ten = document.getElementById("ten").value;
-    let sdt = document.getElementById("sdt").value;
+function guiDonHang() {
+  const ten = document.getElementById("ten").value.trim();
+  const sdt = document.getElementById("sdt").value.trim();
 
-    if (ten === "" || sdt === "") {
-        alert("Vui lòng nhập tên và số điện thoại");
-        return;
+  if (!ten || !sdt) {
+    alert("Vui lòng nhập đầy đủ tên và số điện thoại!");
+    return;
+  }
+
+  let donhang = "";
+  products.forEach((sp, i) => {
+    const sl = document.getElementById("sl" + i).value;
+    if (sl > 0) {
+      donhang += `${sp.ten} - SL: ${sl} - Giá: ${sp.gia}đ\n`;
     }
+  });
 
-    let tong = 0;
-    let chiTiet = "";
+  if (donhang === "") {
+    alert("Bạn chưa chọn mặt hàng nào!");
+    return;
+  }
 
-    sanPham.forEach((sp, i) => {
-        let sl = document.getElementById("sl" + i).value;
-        if (sl > 0) {
-            let tien = sl * sp.gia;
-            tong += tien;
-            chiTiet += `${sp.ten}: ${sl} <br>`;
-        }
-    });
+  // 🔴 THAY LINK GOOGLE FORM CỦA BẠN Ở ĐÂY
+  const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSd09GzRdUOSjEhAp6138o_bxbXzccj5iAAIqbjMXt2FSyD6NQ/viewform?usp=header";
 
-    if (chiTiet === "") {
-        alert("Chưa chọn mặt hàng");
-        return;
-    }
+  const data = new FormData();
+  data.append("entry.1111111111", ten);      // Tên
+  data.append("entry.2222222222", sdt);      // SĐT
+  data.append("entry.3333333333", donhang);  // Đơn hàng
 
-    document.getElementById("ketqua").innerHTML =
-        "<b>Khách:</b> " + ten + "<br>" +
-        "<b>SĐT:</b> " + sdt + "<br><hr>" +
-        chiTiet +
-        "<hr><b>Tổng tiền:</b> " + tong.toLocaleString() + " đ";
+  fetch(formURL, {
+    method: "POST",
+    mode: "no-cors",
+    body: data
+  });
+
+  alert("✅ Đã gửi đơn hàng thành công!");
 }
 </script>
 
