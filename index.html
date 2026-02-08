@@ -46,7 +46,7 @@
 
 <body>
 
-<h1>🛒 ĐƠN ĐẶT HÀNG ONLINE LỚP 12A4</h1>
+<h1>🛒 12A4- ĐƠN ĐẶT HÀNG ONLINE</h1>
 
 <h3>Thông tin khách hàng</h3>
 <p>
@@ -77,13 +77,12 @@
 <script>
 let products = [];
 
-/* Load danh sách sản phẩm */
+/* Load sản phẩm */
 fetch("products.json")
   .then(res => res.json())
   .then(data => {
     products = data;
     const tbody = document.getElementById("danhsach");
-
     data.forEach((sp, i) => {
       tbody.innerHTML += `
         <tr>
@@ -96,10 +95,7 @@ fetch("products.json")
       `;
     });
   })
-  .catch(err => {
-    alert("❌ Không tải được products.json");
-    console.error(err);
-  });
+  .catch(() => alert("❌ Không tải được products.json"));
 
 /* Tính tổng tiền */
 function tinhTong() {
@@ -139,16 +135,15 @@ function guiDonHang() {
     return;
   }
 
-  const now = new Date().toLocaleString("vi-VN");
+  const data = new FormData();
 
- const data = new FormData();
-data.append("entry.1967249955", ten);          // Tên
-data.append("entry.1071319538", sdt);          // SĐT
-data.append("entry.3333333333", now);          // Thời gian
-data.append(
-  "entry.929742002",
-  donhang + "\nTỔNG TIỀN: " + tong + " đ"
-);                                             // Đơn hàng
+  /* === CHỈ DÙNG ENTRY ĐÃ XÁC NHẬN HOẠT ĐỘNG === */
+  data.append("entry.1936250066", ten);     // Tên khách hàng
+  data.append("entry.1289747676", sdt);     // Số điện thoại
+  data.append(
+    "entry.929742002",
+    donhang + "\nTỔNG TIỀN: " + tong + " đ"
+  );                                        // Đơn hàng
 
   fetch(
     "https://docs.google.com/forms/u/0/d/e/1FAIpQLSd09GzRdUOSjEhAp6138o_bxbXzccj5iAAIqbjMXt2FSyD6NQ/formResponse",
