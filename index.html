@@ -1,10 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt hàng online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 { text-align: center; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th { background: #f2f2f2; }
+    input[type="number"] { width: 70px; }
+    input[type="text"] {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .tong {
+      text-align: right;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🛒 ĐƠN ĐẶT HÀNG ONLINE</h1>
+
+<h3>Thông tin khách hàng</h3>
+<p>
+  Tên khách hàng:
+  <input id="ten" type="text" placeholder="Nhập họ tên">
+</p>
+<p>
+  Số điện thoại:
+  <input id="sdt" type="text" placeholder="Nhập số điện thoại">
+</p>
+
+<h3>Danh sách mặt hàng</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Mặt hàng</th>
+      <th>Giá</th>
+      <th>Số lượng</th>
+    </tr>
+  </thead>
+  <tbody id="danhsach"></tbody>
+</table>
+
+<div class="tong" id="tongtien">Tổng tiền: 0 đ</div>
+
+<button onclick="guiDonHang()">📦 GỬI ĐƠN HÀNG</button>
+
 <script>
+let products = [];
+
+/* Load danh sách sản phẩm */
+fetch("products.json")
+  .then(res => res.json())
+  .then(data => {
+    products = data;
+    const tbody = document.getElementById("danhsach");
+
+    data.forEach((sp, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${sp.ten}</td>
+          <td>${sp.gia.toLocaleString()} đ</td>
+          <td>
+            <input type="number" id="sl${i}" min="0" value="0" onchange="tinhTong()">
+          </td>
+        </tr>
+      `;
+    });
+  })
+  .catch(err => {
+    alert("❌ Không tải được products.json");
+    console.error(err);
+  });
+
+/* Tính tổng tiền */
+function tinhTong() {
+  let tong = 0;
+  products.forEach((sp, i) => {
+    const sl = Number(document.getElementById("sl" + i).value);
+    tong += sl * sp.gia;
+  });
+  document.getElementById("tongtien").innerText =
+    "Tổng tiền: " + tong.toLocaleString() + " đ";
+}
+
+/* Gửi đơn hàng */
 function guiDonHang() {
   const ten = document.getElementById("ten").value.trim();
   const sdt = document.getElementById("sdt").value.trim();
 
   if (!ten || !sdt) {
-    alert("Vui lòng nhập tên và số điện thoại!");
+    alert("⚠️ Vui lòng nhập tên và số điện thoại!");
     return;
   }
 
@@ -21,17 +135,20 @@ function guiDonHang() {
   });
 
   if (donhang === "") {
-    alert("Bạn chưa chọn mặt hàng!");
+    alert("⚠️ Bạn chưa chọn mặt hàng!");
     return;
   }
 
   const now = new Date().toLocaleString("vi-VN");
 
   const data = new FormData();
-  data.append("entry.1936250066", ten);
-  data.append("entry.1289747676", sdt);
-  data.append("entry.1071319538", now);
-  data.append("entry.929742002", donhang + `\nTỔNG: ${tong} đ`);
+  data.append("entry.1936250066", ten);      // Tên
+  data.append("entry.1289747676", sdt);      // SĐT
+  data.append("entry.1071319538", now);      // Thời gian
+  data.append(
+    "entry.929742002",
+    donhang + "\nTỔNG TIỀN: " + tong + " đ"
+  );                                         // Đơn hàng
 
   fetch(
     "https://docs.google.com/forms/u/0/d/e/1FAIpQLSd09GzRdUOSjEhAp6138o_bxbXzccj5iAAIqbjMXt2FSyD6NQ/formResponse",
@@ -45,3 +162,6 @@ function guiDonHang() {
   alert("✅ Đã gửi đơn hàng thành công!");
 }
 </script>
+
+</body>
+</html>
