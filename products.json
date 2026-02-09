@@ -1,26 +1,62 @@
 [
   {
-    "ten": "Su hào (củ)",
-    "gia": 5000
+    "ten": "Su hào (combo 2củ)",
+    "gia": 10000
   },
   {
     "ten": "Cải bắp (quả)",
     "gia": 10000
   },
   {
-    "ten": "Khoai tây (kg)",
+    "ten": "Bưởi diễn (quả)",
     "gia": 15000
   },
   {
-    "ten": "Khoai lang (kg)",
-    "gia": 16000
+    "ten": "Bưởi đỏ (quả)",
+    "gia": 6000
   },
   {
-    "ten": "Cá suối (kg)",
-    "gia": 25000
+    "ten":"Đậu Hà Lan  (túi)",
+    "gia": 10000
   },
   {
     "ten": "Cải xoong (mớ)",
+    "gia": 7000
+  },
+{
+    "ten": "Trứng gà nhà (combo 3quả)",
+    "gia": 10000
+},
+{
+    "ten": "Táo  (combo 2 quả)",
     "gia": 5000
-  }
+},
+{
+    "ten": "Rau chuôi (bó)",
+    "gia": 5000
+},
+{
+    "ten": "Mía tím (bó)",
+    "gia": 10000
+},
+{
+    "ten": "Ngo ngọt (2 bắp)",
+    "gia": 5000
+},
+{
+    "ten": "Ngo ngọt trắng (1 bắp)",
+    "gia": 5000
+},
+{
+    "ten": "Khoai tây (kg)",
+    "gia": 15000
+},
+{
+    "ten": "Xúc xích Đức",
+    "gia": 10000
+},
+{
+    "ten": "Viên chiên (xiên)",
+    "gia": 5000
+}
 ]
